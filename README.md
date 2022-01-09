@@ -17,6 +17,7 @@ Factorio, minecraft, dwarf-fortress.
 
 Probably using
 Using https://github.com/photonstorm/phaser
+https://github.com/photonstorm/phaser3-examples/blob/master/public/src/tilemap/paint%20tiles.js
 
 ### UI
 - How does the train move
