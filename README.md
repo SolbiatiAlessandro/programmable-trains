@@ -19,6 +19,11 @@ Probably using
 Using https://github.com/photonstorm/phaser
 https://github.com/photonstorm/phaser3-examples/blob/master/public/src/tilemap/paint%20tiles.js
 
+You need to run server otherwise assets get killed for CORS
+```
+python3 -m http.server
+```
+
 ### UI
 - How does the train move
 
