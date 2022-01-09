@@ -4,8 +4,8 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
 </head>
 <body>
+	<script>
 
-    <script>
 		var config = {
 			type: Phaser.WEBGL,
 			width: 800,
@@ -24,8 +24,11 @@
 		var controls;
 		var marker;
 		var map;
+		var train;
 		var shiftKey;
 		var selectedTile;
+		var trainTile;
+		var desertTile;
 
 		function preload ()
 		{
@@ -35,6 +38,31 @@
 
 		function create ()
 		{
+			// START programmable-train logic
+			train = {
+						x: 0,
+						y: 0,
+						prev_x: 0,
+						prev_y: 0,
+						speed_x: 1,
+						speed_y: 0,
+						fuel: 20,
+						update(original_delta) {
+							var delta = original_delta / 200; // with 200, 
+									// speed = 1 is average speed
+							if (this.fuel > 0) {
+								this.prev_x = this.x;
+								this.prev_y = this.y;
+								this.x = this.x + this.speed_x * delta;
+								this.y = this.y + this.speed_y * delta;
+								this.fuel = this.fuel - (this.speed_x + this.speed_y ) * delta;
+							}
+							console.log(this.x);
+							console.log(this.fuel);
+					}
+			};
+			// END programmable-train logic
+
 			map = this.make.tilemap({ key: 'map' });
 
 			// The first parameter is the name of the tileset in Tiled and the second parameter is the key
@@ -47,6 +75,8 @@
 			var layer = map.createDynamicLayer('Ground', tiles, 0, 0);
 
 			selectedTile = map.getTileAt(2, 3);
+			trainTile = map.getTileAt(2, 3);
+			desertTile = map.getTileAt(5, 5);
 
 			marker = this.add.graphics();
 			marker.lineStyle(2, 0x000000, 1);
@@ -79,13 +109,11 @@
 		function update (time, delta)
 		{
 
-			console.log("update");
 			controls.update(delta);
 
 			var worldPoint = this.input.activePointer.positionToCamera(this.cameras.main);
 
 			// Rounds down to nearest tile
-			console.log(worldPoint);
 			var pointerTileX = map.worldToTileX(worldPoint.x);
 			var pointerTileY = map.worldToTileY(worldPoint.y);
 
@@ -104,8 +132,18 @@
 					map.putTileAt(selectedTile, pointerTileX, pointerTileY);
 				}
 			}
+			train.update(delta);
+			//TODO: put train positions in ints not float
+			if(
+						Math.floor(train.prev_x) != Math.floor(train.x) || 
+						Math.floor(train.prev_y) != Math.floor(train.y) 
+					){
+				map.putTileAt(trainTile, Math.floor(train.x), Math.floor(train.y));
+				map.putTileAt(desertTile, Math.floor(train.prev_x), Math.floor(train.prev_y));
+			}
 		}
     </script>
+
 
 </body>
 </html>
