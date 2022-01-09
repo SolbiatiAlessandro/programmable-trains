@@ -1,6 +1,6 @@
 var config = {
 	type: Phaser.WEBGL,
-	width: 1000,
+	width: 10000,
 	height: 800,
 	backgroundColor: '#2d2d2d',
 	parent: 'phaser-example',
@@ -21,6 +21,8 @@ var shiftKey;
 var selectedTile;
 var trainTile;
 var desertTile;
+var railTile;
+var paintedTrain;
 
 function preload ()
 {
@@ -46,6 +48,17 @@ function create ()
 	selectedTile = map.getTileAt(2, 3);
 	trainTile = map.getTileAt(2, 3);
 	desertTile = map.getTileAt(5, 5);
+	railTile = map.getTileAt(23, 1);
+
+	for(let i = 3; i < 14; i++){
+		map.putTileAt(railTile, i, 1);
+		map.putTileAt(railTile, i, 5);
+	}
+	for(let i = 1; i < 6; i++){
+		map.putTileAt(railTile, 13, i);
+		map.putTileAt(railTile, 3, i);
+	}
+
 
 	marker = this.add.graphics();
 	marker.lineStyle(2, 0x000000, 1);
@@ -92,15 +105,9 @@ function update (time, delta)
 		else
 		{
 			map.putTileAt(selectedTile, pointerTileX, pointerTileY);
+			console.log(pointerTileX, pointerTileY);
+			;debugger
 		}
 	}
-	train.update(delta);
-	//TODO: put train positions in ints not float
-	if(
-				Math.floor(train.prev_x) != Math.floor(train.x) || 
-				Math.floor(train.prev_y) != Math.floor(train.y) 
-			){
-		map.putTileAt(trainTile, Math.floor(train.x), Math.floor(train.y));
-		map.putTileAt(desertTile, Math.floor(train.prev_x), Math.floor(train.prev_y));
-	}
+	train.update(delta, map, railTile, trainTile);
 }
